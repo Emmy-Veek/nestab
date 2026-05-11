@@ -142,28 +142,44 @@ function IdleDurationPicker({ value, onChange }) {
       </div>
       {showCustom && (
         <div className="idle-custom">
-          <input
-            type="number"
-            min="1"
-            value={customNum}
-            className="idle-custom-num"
-            onChange={e => {
-              const n = Math.max(1, parseInt(e.target.value, 10) || 1);
-              setCustomNum(n);
-              applyCustom(n, customUnit);
-            }}
-          />
-          <div className="idle-unit-seg">
-            {['hours', 'days', 'weeks'].map(u => (
-              <button
-                key={u}
-                className={'idle-unit-btn' + (customUnit === u ? ' on' : '')}
-                onClick={() => { setCustomUnit(u); applyCustom(customNum, u); }}
-              >
-                {u}
-              </button>
-            ))}
+          <div className="idle-stepper">
+            <button
+              className="idle-step-btn"
+              onClick={() => {
+                const n = Math.max(1, customNum - 1);
+                setCustomNum(n);
+                applyCustom(n, customUnit);
+              }}
+            >−</button>
+            <input
+              type="number"
+              min="1"
+              value={customNum}
+              className="idle-custom-num"
+              onChange={e => {
+                const n = Math.max(1, parseInt(e.target.value, 10) || 1);
+                setCustomNum(n);
+                applyCustom(n, customUnit);
+              }}
+            />
+            <button
+              className="idle-step-btn"
+              onClick={() => {
+                const n = customNum + 1;
+                setCustomNum(n);
+                applyCustom(n, customUnit);
+              }}
+            >+</button>
           </div>
+          <select
+            className="idle-unit-select"
+            value={customUnit}
+            onChange={e => { setCustomUnit(e.target.value); applyCustom(customNum, e.target.value); }}
+          >
+            <option value="hours">hours</option>
+            <option value="days">days</option>
+            <option value="weeks">weeks</option>
+          </select>
         </div>
       )}
     </>

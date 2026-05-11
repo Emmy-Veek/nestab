@@ -865,11 +865,37 @@
     border-radius: 8px;
     border: 0.5px solid var(--border-1);
   }
-  .idle-custom-num {
-    width: 56px;
-    padding: 4px 8px;
+  .idle-stepper {
+    display: flex;
+    align-items: center;
     border: 0.5px solid var(--border-strong);
     border-radius: 6px;
+    overflow: hidden;
+    background: var(--bg-popup);
+  }
+  .idle-step-btn {
+    width: 28px;
+    height: 30px;
+    border: none;
+    background: var(--bg-row-hover);
+    color: var(--text-1);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1;
+    cursor: default;
+    flex-shrink: 0;
+    transition: background 0.1s;
+    display: grid;
+    place-items: center;
+  }
+  .idle-step-btn:hover { background: var(--bg-row-pressed); }
+  .idle-step-btn:active { background: var(--border-1); }
+  .idle-custom-num {
+    width: 44px;
+    height: 30px;
+    border: none;
+    border-left: 0.5px solid var(--border-1);
+    border-right: 0.5px solid var(--border-1);
     background: var(--bg-popup);
     color: var(--text-1);
     font-family: var(--geist-mono);
@@ -878,31 +904,27 @@
     text-align: center;
     outline: none;
     -moz-appearance: textfield;
+    padding: 0;
   }
-  .idle-custom-num::-webkit-inner-spin-button,
-  .idle-custom-num::-webkit-outer-spin-button { -webkit-appearance: none; }
-  .idle-custom-num:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-tint); }
-  .idle-unit-seg {
-    display: flex;
-    gap: 4px;
-  }
-  .idle-unit-btn {
-    padding: 4px 9px;
+  .idle-unit-select {
+    height: 30px;
+    padding: 0 22px 0 9px;
+    border: 0.5px solid var(--border-strong);
     border-radius: 6px;
-    border: 0.5px solid var(--border-1);
-    background: transparent;
-    color: var(--text-2);
-    font-size: 11.5px;
+    background: var(--bg-popup);
+    color: var(--text-1);
+    font-family: var(--geist);
+    font-size: 12.5px;
     font-weight: 500;
     cursor: default;
-    transition: background 0.1s, color 0.1s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%238a8170' d='M0 0h10L5 6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
   }
-  .idle-unit-btn:hover { background: var(--bg-row-pressed); color: var(--text-1); }
-  .idle-unit-btn.on {
-    background: var(--text-1);
-    color: var(--bg-popup);
-    border-color: transparent;
-  }
+  .idle-unit-select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-tint); }
 
   /* ============================================================
      Onboarding
