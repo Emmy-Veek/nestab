@@ -13,14 +13,14 @@ export async function loadState() {
   if (!isExt) {
     return {
       savedTabs: TAB_DATA,
-      settings: { idleDays: 3, skipPinned: true, defaultGroup: 'date' },
+      settings: { idleHours: 72, skipPinned: true, defaultGroup: 'date' },
       onboardingComplete: true,
     };
   }
   const data = await get(['savedTabs', 'settings', 'onboardingComplete']);
   return {
     savedTabs: data.savedTabs?.length ? data.savedTabs : [],
-    settings: data.settings || { idleDays: 3, skipPinned: true, defaultGroup: 'date' },
+    settings: data.settings || { idleHours: 72, skipPinned: true, defaultGroup: 'date' },
     onboardingComplete: data.onboardingComplete ?? false,
   };
 }

@@ -114,7 +114,7 @@ const __TWEAKS_STYLE = `
 export function useTweaks(defaults) {
   const [values, setValues] = React.useState(() => {
     try {
-      const stored = localStorage.getItem('tab-saver-tweaks');
+      const stored = localStorage.getItem('nestab-tweaks');
       return stored ? { ...defaults, ...JSON.parse(stored) } : defaults;
     } catch { return defaults; }
   });
@@ -124,7 +124,7 @@ export function useTweaks(defaults) {
       ? keyOrEdits : { [keyOrEdits]: val };
     setValues((prev) => {
       const next = { ...prev, ...edits };
-      try { localStorage.setItem('tab-saver-tweaks', JSON.stringify(next)); } catch {}
+      try { localStorage.setItem('nestab-tweaks', JSON.stringify(next)); } catch {}
       return next;
     });
   }, []);

@@ -55,9 +55,9 @@ async function checkAndSaveTabs() {
   const tabActivity = data.tabActivity || {};
   const savedTabs = data.savedTabs || [];
 
-  const idleDays = settings.idleDays ?? 3;
+  const idleHours = settings.idleHours ?? 72;
   const skipPinned = settings.skipPinned !== false;
-  const threshold = idleDays * MS_PER_DAY;
+  const threshold = idleHours * 60 * 60 * 1000;
   const now = Date.now();
 
   const tabs = await chrome.tabs.query({});

@@ -501,11 +501,16 @@
     background: transparent;
     font-family: var(--geist);
     font-size: 11px;
+    font-weight: 500;
     color: var(--text-2);
     padding: 2px 6px;
     border-radius: 5px;
     cursor: default;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
+  .p-footer .link-btn svg { width: 12px; height: 12px; }
   .p-footer .link-btn:hover { background: var(--bg-row-hover); color: var(--text-1); }
   
   /* ============================================================
@@ -619,6 +624,36 @@
     border-radius: 0 0 10px 10px;
     animation: timebar 4.5s linear forwards;
   }
+  .toast-saved {
+    background: var(--accent);
+    color: var(--text-on-accent);
+  }
+  .toast-saved .timebar { background: rgba(255,255,255,0.4); }
+  .toast-saved-icon {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .toast-saved-icon svg { width: 12px; height: 12px; stroke-width: 2.5; }
+
+  .btn-save {
+    background: var(--accent);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 7px;
+    padding: 5px 13px;
+    font-family: var(--geist);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: default;
+    letter-spacing: -0.01em;
+    transition: background 0.12s, opacity 0.12s;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset;
+  }
+  .btn-save:hover { background: var(--accent-2); }
+  .btn-save:active { opacity: 0.85; }
   @keyframes timebar { from { width: 100%; } to { width: 0%; } }
   
   /* ============================================================
@@ -713,6 +748,15 @@
     border-bottom: 0.5px solid var(--border-2);
   }
   .set-row:last-child { border-bottom: 0; }
+  .set-row-nav { cursor: default; transition: background 0.1s; }
+  .set-row-nav:hover { background: var(--bg-row-hover); }
+  .set-row-nav:active { background: var(--bg-row-pressed); }
+  .set-nav-arrow {
+    font-size: 18px;
+    color: var(--text-3);
+    line-height: 1;
+    flex-shrink: 0;
+  }
   .set-row .set-body { flex: 1; min-width: 0; }
   .set-row .set-key {
     font-size: 12.5px;
@@ -784,6 +828,82 @@
     text-align: center;
   }
   
+  .idle-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .idle-chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border-1);
+    background: var(--bg-row-hover);
+    color: var(--text-2);
+    font-family: var(--geist-mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: default;
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+  }
+  .idle-chip:hover {
+    background: var(--bg-row-pressed);
+    color: var(--text-1);
+  }
+  .idle-chip.on {
+    background: var(--text-1);
+    color: var(--bg-popup);
+    border-color: transparent;
+  }
+  .idle-custom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: var(--bg-row-hover);
+    border-radius: 8px;
+    border: 0.5px solid var(--border-1);
+  }
+  .idle-custom-num {
+    width: 56px;
+    padding: 4px 8px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: 6px;
+    background: var(--bg-popup);
+    color: var(--text-1);
+    font-family: var(--geist-mono);
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .idle-custom-num::-webkit-inner-spin-button,
+  .idle-custom-num::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .idle-custom-num:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-tint); }
+  .idle-unit-seg {
+    display: flex;
+    gap: 4px;
+  }
+  .idle-unit-btn {
+    padding: 4px 9px;
+    border-radius: 6px;
+    border: 0.5px solid var(--border-1);
+    background: transparent;
+    color: var(--text-2);
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: default;
+    transition: background 0.1s, color 0.1s;
+  }
+  .idle-unit-btn:hover { background: var(--bg-row-pressed); color: var(--text-1); }
+  .idle-unit-btn.on {
+    background: var(--text-1);
+    color: var(--bg-popup);
+    border-color: transparent;
+  }
+
   /* ============================================================
      Onboarding
      ============================================================ */

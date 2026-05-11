@@ -1,4 +1,4 @@
-/* Tab Saver — root app */
+/* Nestab — root app */
 
 import React, { useState, useEffect } from 'react';
 import Popup from './Popup.jsx';
@@ -47,7 +47,7 @@ export default function App() {
     selectedIds: new Set(),
     toasts: [],
     showRelief: true,
-    settings: { idleDays: 3, skipPinned: true, defaultGroup: 'date' },
+    settings: { idleHours: 72, skipPinned: true, defaultGroup: 'date' },
   });
 
   // Load from storage on mount

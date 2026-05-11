@@ -1,4 +1,4 @@
-/* Tab Saver — popup screens */
+/* Nestab — popup screens */
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { persistSavedTabs, persistSettings, completeOnboarding, reopenTab } from './storage.js';
@@ -12,9 +12,16 @@ export const Icon = {
     </svg>
   ),
   Settings: () => (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="8" cy="8" r="2.1" />
-      <path d="M13.1 9.6a5.6 5.6 0 0 0 0-3.2l1.3-1-1.4-2.4-1.5.6a5.6 5.6 0 0 0-2.8-1.6l-.2-1.6H6.5l-.2 1.6a5.6 5.6 0 0 0-2.8 1.6l-1.5-.6L.6 3.4l1.3 1a5.6 5.6 0 0 0 0 3.2l-1.3 1 1.4 2.4 1.5-.6a5.6 5.6 0 0 0 2.8 1.6l.2 1.6h2.9l.2-1.6a5.6 5.6 0 0 0 2.8-1.6l1.5.6 1.4-2.4z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  ),
+  Stats: () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
     </svg>
   ),
   Close: () => (
@@ -55,6 +62,113 @@ export const Icon = {
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+const IDLE_OPTIONS = [
+  { value: 1,   label: '1h' },
+  { value: 2,   label: '2h' },
+  { value: 5,   label: '5h' },
+  { value: 12,  label: '12h' },
+  { value: 24,  label: '1d' },
+  { value: 48,  label: '2d' },
+  { value: 72,  label: '3d' },
+  { value: 168, label: '7d' },
+  { value: 336, label: '14d' },
+];
+
+function idleLabel(hours) {
+  if (hours < 24) return hours === 1 ? '1 hour' : `${hours} hours`;
+  if (hours % 168 === 0) { const w = hours / 168; return w === 1 ? '1 week' : `${w} weeks`; }
+  const days = hours / 24;
+  return days === 1 ? '1 day' : `${days} days`;
+}
+
+function toHours(num, unit) {
+  if (unit === 'weeks') return num * 168;
+  if (unit === 'days')  return num * 24;
+  return num;
+}
+
+function inferUnit(hours) {
+  if (hours % 168 === 0) return 'weeks';
+  if (hours % 24  === 0) return 'days';
+  return 'hours';
+}
+
+function IdleDurationPicker({ value, onChange }) {
+  const isPreset = IDLE_OPTIONS.some(o => o.value === value);
+  const [showCustom, setShowCustom] = useState(!isPreset);
+  const [customNum, setCustomNum] = useState(() => {
+    if (!isPreset) {
+      const unit = inferUnit(value);
+      return unit === 'weeks' ? value / 168 : unit === 'days' ? value / 24 : value;
+    }
+    return 1;
+  });
+  const [customUnit, setCustomUnit] = useState(() => isPreset ? 'hours' : inferUnit(value));
+
+  function selectPreset(opt) {
+    setShowCustom(false);
+    onChange(opt.value);
+  }
+
+  function openCustom() {
+    setShowCustom(true);
+    onChange(Math.max(1, toHours(customNum, customUnit)));
+  }
+
+  function applyCustom(num, unit) {
+    const hours = Math.max(1, toHours(num, unit));
+    onChange(hours);
+  }
+
+  return (
+    <>
+      <div className="idle-chips">
+        {IDLE_OPTIONS.map(opt => (
+          <button
+            key={opt.value}
+            className={'idle-chip' + (!showCustom && value === opt.value ? ' on' : '')}
+            onClick={() => selectPreset(opt)}
+          >
+            {opt.label}
+          </button>
+        ))}
+        <button
+          className={'idle-chip' + (showCustom ? ' on' : '')}
+          onClick={openCustom}
+        >
+          Custom
+        </button>
+      </div>
+      {showCustom && (
+        <div className="idle-custom">
+          <input
+            type="number"
+            min="1"
+            value={customNum}
+            className="idle-custom-num"
+            onChange={e => {
+              const n = Math.max(1, parseInt(e.target.value, 10) || 1);
+              setCustomNum(n);
+              applyCustom(n, customUnit);
+            }}
+          />
+          <div className="idle-unit-seg">
+            {['hours', 'days', 'weeks'].map(u => (
+              <button
+                key={u}
+                className={'idle-unit-btn' + (customUnit === u ? ' on' : '')}
+                onClick={() => { setCustomUnit(u); applyCustom(customNum, u); }}
+              >
+                {u}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
 function faviconUrl(domain) {
   return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
@@ -151,6 +265,122 @@ function Row({ tab, selected, selectMode, leaving, onReopen, onDismiss, onClick 
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Settings screen ──────────────────────────────────────────────────────────
+
+function SettingsScreen({ settings, showRelief, onSave, onBack, onStats, onToggleRelief }) {
+  const [draft, setDraft] = useState({ ...settings });
+
+  function updateDraft(key, val) {
+    setDraft(d => ({ ...d, [key]: val }));
+  }
+
+  return (
+    <div className="popup settings">
+      <div className="p-header">
+        <div className="p-header-row">
+          <button className="icon-btn" onClick={onBack} title="Back"><Icon.ArrowLeft /></button>
+          <div className="brand" style={{ flex: 1 }}>Settings</div>
+          <button className="btn-save" onClick={() => onSave(draft)}>Save</button>
+        </div>
+      </div>
+      <div className="settings-list">
+        <div className="set-group">
+          <div className="set-group-label">Auto-collection</div>
+          <div className="set-card">
+            <div className="set-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', width: '100%' }}>
+                <div className="set-body">
+                  <div className="set-key">Save tabs after</div>
+                  <div className="set-help">A tab is collected once it's been idle this long.</div>
+                </div>
+              </div>
+              <IdleDurationPicker
+                value={draft.idleHours}
+                onChange={val => updateDraft('idleHours', val)}
+              />
+            </div>
+            <div className="set-row">
+              <div className="set-body">
+                <div className="set-key">Skip pinned tabs</div>
+                <div className="set-help">Never collect tabs you've pinned in Chrome.</div>
+              </div>
+              <div className={'switch ' + (draft.skipPinned ? 'on' : '')}
+                   onClick={() => updateDraft('skipPinned', !draft.skipPinned)} />
+            </div>
+          </div>
+        </div>
+
+        <div className="set-group">
+          <div className="set-group-label">Display</div>
+          <div className="set-card">
+            <div className="set-row">
+              <div className="set-body">
+                <div className="set-key">Default grouping</div>
+                <div className="set-help">How the list opens. You can toggle anytime.</div>
+              </div>
+              <div className="seg">
+                <button className={draft.defaultGroup === 'date' ? 'on' : ''}
+                        onClick={() => updateDraft('defaultGroup', 'date')}>By date</button>
+                <button className={draft.defaultGroup === 'domain' ? 'on' : ''}
+                        onClick={() => updateDraft('defaultGroup', 'domain')}>By domain</button>
+              </div>
+            </div>
+            <div className="set-row">
+              <div className="set-body">
+                <div className="set-key">Reassurance line</div>
+                <div className="set-help">Show the "running freer" message in the footer.</div>
+              </div>
+              <div className={'switch ' + (showRelief ? 'on' : '')}
+                   onClick={onToggleRelief} />
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ── Stats screen ──────────────────────────────────────────────────────────────
+
+function StatsScreen({ totalTabs, onBack }) {
+  return (
+    <div className="popup settings">
+      <div className="p-header">
+        <div className="p-header-row">
+          <button className="icon-btn" onClick={onBack} title="Back"><Icon.ArrowLeft /></button>
+          <div className="brand" style={{ flex: 1 }}>Stats</div>
+        </div>
+      </div>
+      <div className="settings-list">
+        <div className="set-group">
+          <div className="set-group-label">Usage</div>
+          <div className="set-card">
+            <div className="set-row">
+              <div className="set-body">
+                <div className="set-key">Saved all-time</div>
+                <div className="set-help">Across this device, since you installed Nestab.</div>
+              </div>
+              <div style={{ fontFamily: 'var(--geist-mono)', fontSize: 13, fontWeight: 500, color: 'var(--text-1)' }}>
+                {totalTabs} tabs
+              </div>
+            </div>
+            <div className="set-row">
+              <div className="set-body">
+                <div className="set-key">Memory recovered</div>
+                <div className="set-help">Estimated, based on average tab footprint.</div>
+              </div>
+              <div style={{ fontFamily: 'var(--geist-mono)', fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
+                {freedGb(totalTabs)} GB
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -254,7 +484,7 @@ export default function Popup({ screen, setScreen, state, setState }) {
         <div className="onboard">
           <div className="ob-hero">
             <div className="ob-mark">T</div>
-            <h2 className="ob-headline">Tab Saver is watching quietly.</h2>
+            <h2 className="ob-headline">Nestab is watching quietly.</h2>
             <p className="ob-sub">
               We'll tuck away tabs you've ignored for a few days — so your
               computer breathes and you never lose what mattered.
@@ -290,7 +520,7 @@ export default function Popup({ screen, setScreen, state, setState }) {
               <div className="quick-set-row">
                 <span className="k">Save tabs after</span>
                 <span style={{ fontFamily: 'var(--geist-mono)', fontSize: 12, color: 'var(--text-1)', fontWeight: 500 }}>
-                  {state.settings.idleDays} day{state.settings.idleDays === 1 ? '' : 's'} idle
+                  {idleLabel(state.settings.idleHours)} idle
                 </span>
               </div>
               <div className="quick-set-row">
@@ -332,7 +562,7 @@ export default function Popup({ screen, setScreen, state, setState }) {
       <div className="popup">
         <div className="p-header">
           <div className="p-header-row">
-            <div className="brand"><div className="brand-mark">T</div>Tab Saver</div>
+            <div className="brand"><div className="brand-mark">N</div>Nestab</div>
             <span className="count-tag"><b>0</b> saved</span>
             <button className="icon-btn" onClick={() => setScreen('settings')} title="Settings"><Icon.Settings /></button>
           </div>
@@ -349,7 +579,7 @@ export default function Popup({ screen, setScreen, state, setState }) {
           <h2>All clear.</h2>
           <p>
             Keep browsing normally. After{' '}
-            <span className="tag-inline">{state.settings.idleDays} days</span>{' '}
+            <span className="tag-inline">{idleLabel(state.settings.idleHours)}</span>{' '}
             of sitting idle, any tab quietly lands here. No buttons to press.
           </p>
         </div>
@@ -360,103 +590,31 @@ export default function Popup({ screen, setScreen, state, setState }) {
   // ── Settings ─────────────────────────────────────────────────────────────────
 
   if (screen === 'settings') {
-    const updateSetting = (key, val) => {
-      setState(s => {
-        const settings = { ...s.settings, [key]: val };
-        persistSettings(settings);
-        return { ...s, settings };
-      });
-    };
     return (
-      <div className="popup settings">
-        <div className="p-header">
-          <div className="p-header-row">
-            <button className="icon-btn" onClick={() => setScreen('main')} title="Back"><Icon.ArrowLeft /></button>
-            <div className="brand" style={{ flex: 1 }}>Settings</div>
-          </div>
-        </div>
-        <div className="settings-list">
-          <div className="set-group">
-            <div className="set-group-label">Auto-collection</div>
-            <div className="set-card">
-              <div className="set-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center', width: '100%' }}>
-                  <div className="set-body">
-                    <div className="set-key">Save tabs after</div>
-                    <div className="set-help">A tab is collected once it's been idle this long.</div>
-                  </div>
-                </div>
-                <div className="set-slider">
-                  <input type="range" min="1" max="14" step="1"
-                         value={state.settings.idleDays}
-                         onChange={(e) => updateSetting('idleDays', +e.target.value)} />
-                  <span className="value-pill">
-                    {state.settings.idleDays} day{state.settings.idleDays === 1 ? '' : 's'}
-                  </span>
-                </div>
-              </div>
-              <div className="set-row">
-                <div className="set-body">
-                  <div className="set-key">Skip pinned tabs</div>
-                  <div className="set-help">Never collect tabs you've pinned in Chrome.</div>
-                </div>
-                <div className={'switch ' + (state.settings.skipPinned ? 'on' : '')}
-                     onClick={() => updateSetting('skipPinned', !state.settings.skipPinned)} />
-              </div>
-            </div>
-          </div>
+      <SettingsScreen
+        settings={state.settings}
+        showRelief={showRelief}
+        onSave={(draft) => {
+          setState(s => ({ ...s, settings: draft }));
+          persistSettings(draft);
+          pushToast({ kind: 'saved', title: 'Settings saved' });
+          setScreen('main');
+        }}
+        onBack={() => setScreen('main')}
+        onStats={() => setScreen('stats')}
+        onToggleRelief={() => setS({ showRelief: !showRelief })}
+      />
+    );
+  }
 
-          <div className="set-group">
-            <div className="set-group-label">Display</div>
-            <div className="set-card">
-              <div className="set-row">
-                <div className="set-body">
-                  <div className="set-key">Default grouping</div>
-                  <div className="set-help">How the list opens. You can toggle anytime.</div>
-                </div>
-                <div className="seg">
-                  <button className={state.settings.defaultGroup === 'date' ? 'on' : ''}
-                          onClick={() => updateSetting('defaultGroup', 'date')}>By date</button>
-                  <button className={state.settings.defaultGroup === 'domain' ? 'on' : ''}
-                          onClick={() => updateSetting('defaultGroup', 'domain')}>By domain</button>
-                </div>
-              </div>
-              <div className="set-row">
-                <div className="set-body">
-                  <div className="set-key">Reassurance line</div>
-                  <div className="set-help">Show the "running freer" message in the footer.</div>
-                </div>
-                <div className={'switch ' + (showRelief ? 'on' : '')}
-                     onClick={() => setS({ showRelief: !showRelief })} />
-              </div>
-            </div>
-          </div>
+  // ── Stats ─────────────────────────────────────────────────────────────────────
 
-          <div className="set-group">
-            <div className="set-group-label">Stats</div>
-            <div className="set-card">
-              <div className="set-row">
-                <div className="set-body">
-                  <div className="set-key">Saved all-time</div>
-                  <div className="set-help">Across this device, since you installed Tab Saver.</div>
-                </div>
-                <div style={{ fontFamily: 'var(--geist-mono)', fontSize: 13, fontWeight: 500, color: 'var(--text-1)' }}>
-                  {tabs.length + removed.size} tabs
-                </div>
-              </div>
-              <div className="set-row">
-                <div className="set-body">
-                  <div className="set-key">Memory recovered</div>
-                  <div className="set-help">Estimated, based on average tab footprint.</div>
-                </div>
-                <div style={{ fontFamily: 'var(--geist-mono)', fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
-                  {freedGb(tabs.length + removed.size)} GB
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  if (screen === 'stats') {
+    return (
+      <StatsScreen
+        totalTabs={tabs.length + removed.size}
+        onBack={() => setScreen('main')}
+      />
     );
   }
 
@@ -467,8 +625,8 @@ export default function Popup({ screen, setScreen, state, setState }) {
       <div className="p-header">
         <div className="p-header-row">
           <div className="brand">
-            <div className="brand-mark">T</div>
-            Tab Saver
+            <div className="brand-mark">N</div>
+            Nestab
           </div>
           <span className="count-tag"><b>{totalLive}</b> resting</span>
           <button
@@ -545,13 +703,26 @@ export default function Popup({ screen, setScreen, state, setState }) {
           <span className="pulse" />
           <span>Your computer is running freer.</span>
           <span className="p-footer-spacer" />
-          <button className="link-btn" onClick={() => setScreen('settings')}>Settings</button>
+          <button className="link-btn" onClick={() => setScreen('stats')}>
+            <Icon.Stats />
+            Stats
+          </button>
         </div>
       )}
 
       {!selectMode && toasts.length > 0 && (
         <div className="toast-stack">
-          {toasts.map(toast => (
+          {toasts.map(toast => toast.kind === 'saved' ? (
+            <div key={toast.id} className="toast toast-saved">
+              <div className="toast-saved-icon">
+                <Icon.Check />
+              </div>
+              <div className="grow">
+                <div className="tt">{toast.title}</div>
+              </div>
+              <div className="timebar" />
+            </div>
+          ) : (
             <div key={toast.id} className="toast">
               <Favicon domain={toast.domain || 'example.com'} />
               <div className="grow">

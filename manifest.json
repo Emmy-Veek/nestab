@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Tab Saver",
+    "name": "Nestab",
     "version": "1.0.0",
-    "description": "Quietly saves tabs you haven't used in a few days — so your computer can breathe.",
+    "description": "Nestab quietly saves tabs you haven't used in a while — so your computer can breathe.",
     "permissions": ["tabs", "storage", "alarms"],
     "background": {
       "service_worker": "background.js"
