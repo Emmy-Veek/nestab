@@ -736,7 +736,6 @@ export default function Popup({ screen, setScreen, state, setState }) {
               <div className="grow">
                 <div className="tt">{toast.title}</div>
               </div>
-              <div className="timebar" />
             </div>
           ) : (
             <div key={toast.id} className="toast">

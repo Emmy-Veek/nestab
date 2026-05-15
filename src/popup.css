@@ -906,6 +906,8 @@
     -moz-appearance: textfield;
     padding: 0;
   }
+  .idle-custom-num::-webkit-inner-spin-button,
+  .idle-custom-num::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   .idle-unit-select {
     height: 30px;
     padding: 0 22px 0 9px;
