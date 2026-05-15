@@ -76,6 +76,7 @@ const IDLE_OPTIONS = [
 ];
 
 function idleLabel(hours) {
+  if (hours < 1) { const m = Math.round(hours * 60); return m === 1 ? '1 minute' : `${m} minutes`; }
   if (hours < 24) return hours === 1 ? '1 hour' : `${hours} hours`;
   if (hours % 168 === 0) { const w = hours / 168; return w === 1 ? '1 week' : `${w} weeks`; }
   const days = hours / 24;
@@ -83,12 +84,14 @@ function idleLabel(hours) {
 }
 
 function toHours(num, unit) {
+  if (unit === 'minutes') return num / 60;
   if (unit === 'weeks') return num * 168;
   if (unit === 'days')  return num * 24;
   return num;
 }
 
 function inferUnit(hours) {
+  if (hours < 1)         return 'minutes';
   if (hours % 168 === 0) return 'weeks';
   if (hours % 24  === 0) return 'days';
   return 'hours';
@@ -100,6 +103,7 @@ function IdleDurationPicker({ value, onChange }) {
   const [customNum, setCustomNum] = useState(() => {
     if (!isPreset) {
       const unit = inferUnit(value);
+      if (unit === 'minutes') return Math.round(value * 60);
       return unit === 'weeks' ? value / 168 : unit === 'days' ? value / 24 : value;
     }
     return 1;
@@ -113,11 +117,11 @@ function IdleDurationPicker({ value, onChange }) {
 
   function openCustom() {
     setShowCustom(true);
-    onChange(Math.max(1, toHours(customNum, customUnit)));
+    onChange(Math.max(1 / 60, toHours(customNum, customUnit)));
   }
 
   function applyCustom(num, unit) {
-    const hours = Math.max(1, toHours(num, unit));
+    const hours = Math.max(1 / 60, toHours(num, unit));
     onChange(hours);
   }
 
@@ -176,6 +180,7 @@ function IdleDurationPicker({ value, onChange }) {
             value={customUnit}
             onChange={e => { setCustomUnit(e.target.value); applyCustom(customNum, e.target.value); }}
           >
+            <option value="minutes">minutes</option>
             <option value="hours">hours</option>
             <option value="days">days</option>
             <option value="weeks">weeks</option>
@@ -191,13 +196,14 @@ function faviconUrl(domain) {
 }
 
 function timeAgo(savedAt, unit) {
+  if (unit === 'minutes') return savedAt === 1 ? '1m ago' : `${savedAt}m ago`;
   if (unit === 'hours') return savedAt === 1 ? '1h ago' : `${savedAt}h ago`;
   if (savedAt === 1) return '1d ago';
   return `${savedAt}d ago`;
 }
 
 function bucketFor(tab) {
-  if (tab.unit === 'hours') return 'today';
+  if (tab.unit === 'minutes' || tab.unit === 'hours') return 'today';
   if (tab.savedAt === 1) return 'yesterday';
   if (tab.savedAt <= 3) return 'earlier';
   if (tab.savedAt <= 7) return 'thisweek';

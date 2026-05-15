@@ -23,7 +23,7 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
 });
 
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
-  chrome.alarms.create('check-idle-tabs', { periodInMinutes: 60 });
+  chrome.alarms.create('check-idle-tabs', { periodInMinutes: 5 });
   await initializeTabActivity();
   if (reason === 'install') {
     await chrome.storage.local.set({ onboardingComplete: false });
@@ -31,7 +31,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  chrome.alarms.create('check-idle-tabs', { periodInMinutes: 60 });
+  chrome.alarms.create('check-idle-tabs', { periodInMinutes: 5 });
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
@@ -79,9 +79,13 @@ async function checkAndSaveTabs() {
 
     const idleMs = now - lastActive;
     const idleDaysCount = Math.floor(idleMs / MS_PER_DAY);
+    const MS_PER_HOUR = 60 * 60 * 1000;
     let savedAt, unit;
-    if (idleMs < MS_PER_DAY) {
-      savedAt = Math.max(1, Math.floor(idleMs / (60 * 60 * 1000)));
+    if (idleMs < MS_PER_HOUR) {
+      savedAt = Math.max(1, Math.floor(idleMs / (60 * 1000)));
+      unit = 'minutes';
+    } else if (idleMs < MS_PER_DAY) {
+      savedAt = Math.max(1, Math.floor(idleMs / MS_PER_HOUR));
       unit = 'hours';
     } else {
       savedAt = idleDaysCount;
