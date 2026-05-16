@@ -206,7 +206,11 @@ function timeAgo(savedTimestamp) {
 }
 
 function bucketFor(tab) {
-  const days = Math.floor((Date.now() - tab.savedTimestamp) / 86400000);
+  const now   = new Date();
+  const saved = new Date(tab.savedTimestamp);
+  const todayMidnight = new Date(now.getFullYear(),   now.getMonth(),   now.getDate());
+  const savedMidnight = new Date(saved.getFullYear(), saved.getMonth(), saved.getDate());
+  const days = Math.round((todayMidnight - savedMidnight) / 86400000);
   if (days === 0) return 'today';
   if (days === 1) return 'yesterday';
   if (days <= 3)  return 'earlier';
