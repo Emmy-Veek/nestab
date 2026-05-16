@@ -801,7 +801,7 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
         </div>
       )}
 
-      {selectMode && (
+      {selectMode && selectedIds.size > 0 && (
         <div className="bulk-bar">
           <span className="count">{selectedIds.size} selected</span>
           <span className="grow" />
