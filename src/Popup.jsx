@@ -681,7 +681,32 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
             <div className="brand-mark">N</div>
             Nestab
           </div>
-          <button className={'icon-btn' + (refreshing ? ' spinning' : '')} onClick={handleRefresh} title="Refresh"><Icon.Refresh /></button>
+          <button className="icon-btn" onClick={() => setScreen('settings')} title="Settings">
+            <Icon.Settings />
+          </button>
+        </div>
+      </div>
+
+      <div className="p-subbar">
+        <div className="p-subbar-row">
+          <div className="search-input">
+            <Icon.Search />
+            <input
+              value={query}
+              onChange={(e) => setS({ query: e.target.value })}
+              placeholder="Search saved tabs…"
+            />
+            {query
+              ? <button className="row-action-btn" style={{ width: 18, height: 18 }} onClick={() => setS({ query: '' })}><Icon.Close /></button>
+              : <span className="kbd">⌘K</span>
+            }
+          </div>
+          <div className="seg">
+            <button className={group === 'date' ? 'on' : ''} onClick={() => setS({ group: 'date' })}>Date</button>
+            <button className={group === 'domain' ? 'on' : ''} onClick={() => setS({ group: 'domain' })}>Domain</button>
+          </div>
+        </div>
+        <div className="sub-actions">
           <button
             className={'icon-btn ' + (selectMode ? 'is-active' : '')}
             onClick={() => setS({ selectMode: !selectMode, selectedIds: new Set() })}
@@ -689,34 +714,15 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
           >
             <Icon.Check />
           </button>
-          <button className="icon-btn" onClick={() => setScreen('settings')} title="Settings">
-            <Icon.Settings />
+          <button className={'icon-btn' + (refreshing ? ' spinning' : '')} onClick={handleRefresh} title="Refresh">
+            <Icon.Refresh />
           </button>
-        </div>
-        {showRelief && (
-          <div className="relief-line">
-            <span className="pulse" />
-            <span><b>{totalLive} tabs</b> safe — freed <span className="freed">{freedGb(totalLive)} GB</span> of memory.</span>
-          </div>
-        )}
-      </div>
-
-      <div className="p-subbar">
-        <div className="search-input">
-          <Icon.Search />
-          <input
-            value={query}
-            onChange={(e) => setS({ query: e.target.value })}
-            placeholder="Search saved tabs…"
-          />
-          {query
-            ? <button className="row-action-btn" style={{ width: 18, height: 18 }} onClick={() => setS({ query: '' })}><Icon.Close /></button>
-            : <span className="kbd">⌘K</span>
-          }
-        </div>
-        <div className="seg">
-          <button className={group === 'date' ? 'on' : ''} onClick={() => setS({ group: 'date' })}>Date</button>
-          <button className={group === 'domain' ? 'on' : ''} onClick={() => setS({ group: 'domain' })}>Domain</button>
+          {showRelief && (
+            <div className="relief-line">
+              <span className="pulse" />
+              <span><b>{totalLive} tabs</b> safe — freed <span className="freed">{freedGb(totalLive)} GB</span> of memory.</span>
+            </div>
+          )}
         </div>
       </div>
 
