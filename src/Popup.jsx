@@ -59,6 +59,11 @@ export const Icon = {
       <path d="M8 2v3M8 11v3M2 8h3M11 8h3M3.8 3.8l2 2M10.2 10.2l2 2M3.8 12.2l2-2M10.2 5.8l2-2" />
     </svg>
   ),
+  Refresh: () => (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M13.5 8A5.5 5.5 0 1 1 10 3.07" /><path d="M10 2v3h3" />
+    </svg>
+  ),
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -417,7 +422,7 @@ function StatsScreen({ totalTabs, onBack }) {
 
 // ── Popup ─────────────────────────────────────────────────────────────────────
 
-export default function Popup({ screen, setScreen, state, setState }) {
+export default function Popup({ screen, setScreen, state, setState, onRefresh }) {
   const { tabs, removed, group, query, selectMode, selectedIds, leavingIds, toasts, showRelief } = state;
 
   const visibleTabs = useMemo(() => {
@@ -664,7 +669,7 @@ export default function Popup({ screen, setScreen, state, setState }) {
             <div className="brand-mark">N</div>
             Nestab
           </div>
-          <span className="count-tag"><b>{totalLive}</b> resting</span>
+          <button className="icon-btn" onClick={onRefresh} title="Refresh"><Icon.Refresh /></button>
           <button
             className={'icon-btn ' + (selectMode ? 'is-active' : '')}
             onClick={() => setS({ selectMode: !selectMode, selectedIds: new Set() })}

@@ -78,6 +78,12 @@ export default function App() {
 
   const goScreen = (s) => { setScreen(s); setTweak('screen', s); };
 
+  const handleRefresh = () => {
+    loadState().then(({ savedTabs, settings }) => {
+      setState(s => ({ ...s, tabs: savedTabs, settings, removed: new Set(), leavingIds: new Set() }));
+    });
+  };
+
   // Demo helpers
   const triggerBulkSelect = () => {
     goScreen('main');
@@ -109,6 +115,7 @@ export default function App() {
         setScreen={goScreen}
         state={state}
         setState={setState}
+        onRefresh={handleRefresh}
       />
 
       <TweaksPanel title="Tweaks">
