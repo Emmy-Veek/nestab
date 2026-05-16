@@ -718,10 +718,13 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
             <Icon.Refresh />
           </button>
           {showRelief && (
-            <div className="relief-line">
-              <span className="pulse" />
-              <span><b>{totalLive} tabs</b> safe — est. <span className="freed">~{freedGb(totalLive)} GB</span> freed.</span>
-            </div>
+            <>
+              <div className="sub-actions-divider" />
+              <div className="relief-line">
+                <span className="pulse" />
+                <span><b>{totalLive} tabs</b> safe — est. <span className="freed">~{freedGb(totalLive)} GB</span> freed.</span>
+              </div>
+            </>
           )}
         </div>
       </div>
