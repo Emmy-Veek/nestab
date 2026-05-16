@@ -1,6 +1,6 @@
 /* Nestab — popup screens */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { persistSavedTabs, persistSettings, completeOnboarding, reopenTab } from './storage.js';
 
 // ── Icons ────────────────────────────────────────────────────────────────────
@@ -195,18 +195,22 @@ function faviconUrl(domain) {
   return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
 }
 
-function timeAgo(savedAt, unit) {
-  if (unit === 'minutes') return savedAt === 1 ? '1m ago' : `${savedAt}m ago`;
-  if (unit === 'hours') return savedAt === 1 ? '1h ago' : `${savedAt}h ago`;
-  if (savedAt === 1) return '1d ago';
-  return `${savedAt}d ago`;
+function timeAgo(savedTimestamp) {
+  const ms = Date.now() - savedTimestamp;
+  const mins  = Math.floor(ms / 60000);
+  const hours = Math.floor(ms / 3600000);
+  const days  = Math.floor(ms / 86400000);
+  if (mins  < 60) return mins  <= 1 ? '1m ago'  : `${mins}m ago`;
+  if (hours < 24) return hours === 1 ? '1h ago'  : `${hours}h ago`;
+  return days === 1 ? '1d ago' : `${days}d ago`;
 }
 
 function bucketFor(tab) {
-  if (tab.unit === 'minutes' || tab.unit === 'hours') return 'today';
-  if (tab.savedAt === 1) return 'yesterday';
-  if (tab.savedAt <= 3) return 'earlier';
-  if (tab.savedAt <= 7) return 'thisweek';
+  const days = Math.floor((Date.now() - tab.savedTimestamp) / 86400000);
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days <= 3)  return 'earlier';
+  if (days <= 7)  return 'thisweek';
   return 'older';
 }
 
@@ -274,7 +278,7 @@ function Row({ tab, selected, selectMode, leaving, onReopen, onDismiss, onClick 
         <div className="row-meta">
           <span>{rootDomain(tab.domain)}</span>
           <span className="dot" />
-          <span className="time">{timeAgo(tab.savedAt, tab.unit)}</span>
+          <span className="time">{timeAgo(tab.savedTimestamp)}</span>
         </div>
       </div>
       {!selectMode && (
@@ -423,6 +427,12 @@ export default function Popup({ screen, setScreen, state, setState }) {
 
   const groups = useMemo(() => groupBy(visibleTabs, group), [visibleTabs, group]);
   const totalLive = tabs.length - removed.size;
+
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 60000);
+    return () => clearInterval(id);
+  }, []);
 
   const setS = useCallback((patch) => setState(s => ({ ...s, ...patch })), [setState]);
 
