@@ -720,7 +720,7 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
           {showRelief && (
             <div className="relief-line">
               <span className="pulse" />
-              <span><b>{totalLive} tabs</b> safe — freed <span className="freed">{freedGb(totalLive)} GB</span> of memory.</span>
+              <span><b>{totalLive} tabs</b> safe — est. <span className="freed">~{freedGb(totalLive)} GB</span> freed.</span>
             </div>
           )}
         </div>
