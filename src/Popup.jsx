@@ -466,7 +466,7 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
 
   const pushToast = useCallback((toast) => {
     const id = Math.random().toString(36).slice(2);
-    setState(s => ({ ...s, toasts: [...s.toasts, { id, ...toast }] }));
+    setState(s => ({ ...s, toasts: [{ id, ...toast }] }));
     setTimeout(() => {
       setState(s => ({ ...s, toasts: s.toasts.filter(x => x.id !== id) }));
     }, 4500);
