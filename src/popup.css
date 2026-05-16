@@ -177,6 +177,9 @@
   .icon-btn svg { width: 15px; height: 15px; }
   .icon-btn.is-active { background: var(--accent-tint); color: var(--accent-2); }
   .dark .icon-btn.is-active { color: var(--accent); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .icon-btn.spinning { pointer-events: none; }
+  .icon-btn.spinning svg { animation: spin 0.7s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: center; }
   
   .relief-line {
     font-size: 12px;

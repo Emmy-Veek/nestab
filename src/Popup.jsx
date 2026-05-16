@@ -60,8 +60,9 @@ export const Icon = {
     </svg>
   ),
   Refresh: () => (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M13.5 8A5.5 5.5 0 1 1 10 3.07" /><path d="M10 2v3h3" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 4 23 10 17 10" />
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
     </svg>
   ),
 };
@@ -443,6 +444,8 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
     return () => clearInterval(id);
   }, []);
 
+  const [refreshing, setRefreshing] = useState(false);
+
   const setS = useCallback((patch) => setState(s => ({ ...s, ...patch })), [setState]);
 
   const beginLeave = useCallback((ids, after) => {
@@ -468,6 +471,15 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
       setState(s => ({ ...s, toasts: s.toasts.filter(x => x.id !== id) }));
     }, 4500);
   }, [setState]);
+
+  const handleRefresh = useCallback(() => {
+    if (refreshing) return;
+    setRefreshing(true);
+    onRefresh().then(() => {
+      setRefreshing(false);
+      pushToast({ kind: 'saved', title: 'List refreshed' });
+    });
+  }, [refreshing, onRefresh, pushToast]);
 
   const handleReopen = useCallback((tab) => {
     beginLeave([tab.id]);
@@ -669,7 +681,7 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
             <div className="brand-mark">N</div>
             Nestab
           </div>
-          <button className="icon-btn" onClick={onRefresh} title="Refresh"><Icon.Refresh /></button>
+          <button className={'icon-btn' + (refreshing ? ' spinning' : '')} onClick={handleRefresh} title="Refresh"><Icon.Refresh /></button>
           <button
             className={'icon-btn ' + (selectMode ? 'is-active' : '')}
             onClick={() => setS({ selectMode: !selectMode, selectedIds: new Set() })}

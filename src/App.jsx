@@ -79,7 +79,7 @@ export default function App() {
   const goScreen = (s) => { setScreen(s); setTweak('screen', s); };
 
   const handleRefresh = () => {
-    loadState().then(({ savedTabs, settings }) => {
+    return loadState().then(({ savedTabs, settings }) => {
       setState(s => ({ ...s, tabs: savedTabs, settings, removed: new Set(), leavingIds: new Set() }));
     });
   };
