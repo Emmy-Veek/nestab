@@ -48,16 +48,18 @@ export default function App() {
     toasts: [],
     showRelief: true,
     settings: { idleHours: 72, skipPinned: true, defaultGroup: 'date' },
+    totalSaved: 0,
   });
 
   // Load from storage on mount
   useEffect(() => {
-    loadState().then(({ savedTabs, settings, onboardingComplete }) => {
+    loadState().then(({ savedTabs, settings, onboardingComplete, totalSaved }) => {
       setState(s => ({
         ...s,
         tabs: savedTabs.length ? savedTabs : TAB_DATA,
         settings,
         showRelief: t.showRelief,
+        totalSaved,
       }));
       if (!onboardingComplete) setScreen('onboard-1');
       setReady(true);
@@ -79,8 +81,8 @@ export default function App() {
   const goScreen = (s) => { setScreen(s); setTweak('screen', s); };
 
   const handleRefresh = () => {
-    return loadState().then(({ savedTabs, settings }) => {
-      setState(s => ({ ...s, tabs: savedTabs, settings, removed: new Set(), leavingIds: new Set() }));
+    return loadState().then(({ savedTabs, settings, totalSaved }) => {
+      setState(s => ({ ...s, tabs: savedTabs, settings, totalSaved, removed: new Set(), leavingIds: new Set() }));
     });
   };
 

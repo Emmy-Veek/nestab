@@ -411,7 +411,7 @@ function StatsScreen({ totalTabs, onBack }) {
                 <div className="set-help">Estimated, based on average tab footprint.</div>
               </div>
               <div style={{ fontFamily: 'var(--geist-mono)', fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
-                {freedGb(totalTabs)} GB
+                ~{freedGb(totalTabs)} GB
               </div>
             </div>
           </div>
@@ -424,7 +424,7 @@ function StatsScreen({ totalTabs, onBack }) {
 // ── Popup ─────────────────────────────────────────────────────────────────────
 
 export default function Popup({ screen, setScreen, state, setState, onRefresh }) {
-  const { tabs, removed, group, query, selectMode, selectedIds, leavingIds, toasts, showRelief } = state;
+  const { tabs, removed, group, query, selectMode, selectedIds, leavingIds, toasts, showRelief, totalSaved } = state;
 
   const visibleTabs = useMemo(() => {
     const live = tabs.filter(t => !removed.has(t.id));
@@ -665,7 +665,7 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
   if (screen === 'stats') {
     return (
       <StatsScreen
-        totalTabs={tabs.length + removed.size}
+        totalTabs={totalSaved}
         onBack={() => setScreen('main')}
       />
     );
@@ -803,10 +803,10 @@ export default function Popup({ screen, setScreen, state, setState, onRefresh })
 
       {selectMode && selectedIds.size > 0 && (
         <div className="bulk-bar">
+          <button className="bulk-close" onClick={exitSelect} title="Dismiss"><Icon.Close /></button>
           <span className="count">{selectedIds.size} selected</span>
           <span className="grow" />
-          <button onClick={exitSelect}>Cancel</button>
-          <button onClick={bulkDismiss}><Icon.Trash /> Dismiss</button>
+          <button className="bulk-delete" onClick={bulkDismiss}><Icon.Trash /> Delete all</button>
           <button className="primary" onClick={bulkReopen}><Icon.ExternalLink /> Reopen all</button>
         </div>
       )}

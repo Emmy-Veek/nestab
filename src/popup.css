@@ -582,6 +582,19 @@
   }
   .bulk-bar button:hover { background: rgba(255,255,255,0.1); opacity: 1; }
   .bulk-bar button.primary { background: var(--accent); opacity: 1; white-space: nowrap; }
+  .bulk-bar button svg { width: 13px; height: 13px; flex-shrink: 0; }
+  .bulk-bar .bulk-close {
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    background: rgba(255,255,255,0.15);
+    border-radius: 6px;
+    opacity: 1;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .bulk-bar .bulk-close:hover { background: rgba(255,255,255,0.25); }
+  .bulk-bar .bulk-delete { white-space: nowrap; }
+  .bulk-bar .bulk-delete:hover { background: rgba(220,50,50,0.25); color: #ff6b6b; opacity: 1; }
   .bulk-bar button.primary:hover { background: var(--accent-2); }
   
   /* ============================================================

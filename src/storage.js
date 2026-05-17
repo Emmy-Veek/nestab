@@ -17,11 +17,12 @@ export async function loadState() {
       onboardingComplete: true,
     };
   }
-  const data = await get(['savedTabs', 'settings', 'onboardingComplete']);
+  const data = await get(['savedTabs', 'settings', 'onboardingComplete', 'totalSaved']);
   return {
     savedTabs: data.savedTabs?.length ? data.savedTabs : [],
     settings: data.settings || { idleHours: 72, skipPinned: true, defaultGroup: 'date' },
     onboardingComplete: data.onboardingComplete ?? false,
+    totalSaved: data.totalSaved ?? data.savedTabs?.length ?? 0,
   };
 }
 

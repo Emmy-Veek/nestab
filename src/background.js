@@ -108,7 +108,9 @@ async function checkAndSaveTabs() {
   if (toSave.length === 0) return;
 
   const newSavedTabs = [...toSave, ...savedTabs];
-  await chrome.storage.local.set({ savedTabs: newSavedTabs });
+  const totalData = await chrome.storage.local.get('totalSaved');
+  const newTotal = (totalData.totalSaved || 0) + toSave.length;
+  await chrome.storage.local.set({ savedTabs: newSavedTabs, totalSaved: newTotal });
   await chrome.tabs.remove(toClose);
   updateBadge(newSavedTabs.length);
 }
